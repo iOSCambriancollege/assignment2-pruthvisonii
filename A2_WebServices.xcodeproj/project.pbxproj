@@ -148,9 +148,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				A654FE08290F5A65004F8440 /* APIHelper.swift in Sources */,
-				A654FDF8290F59EE004F8440 /* ViewController.swift in Sources */,
-				A654FE0A290F5AE0004F8440 /* ImageViewController.swift in Sources */,
-				A654FE0C290F5AF4004F8440 /* TableViewCell.swift in Sources */,
+				A654FDF8290F59EE004F8440 /* DisplayDogViewController.swift in Sources */,
+				A654FE0A290F5AE0004F8440 /* ImageView.swift in Sources */,
+				A654FE0C290F5AF4004F8440 /* TableCell.swift in Sources */,
 				A654FDF4290F59EE004F8440 /* AppDelegate.swift in Sources */,
 				A654FDF6290F59EE004F8440 /* SceneDelegate.swift in Sources */,
 			);
