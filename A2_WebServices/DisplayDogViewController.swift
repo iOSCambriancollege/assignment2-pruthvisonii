@@ -3,36 +3,75 @@ import SDWebImage
 
 class DisplayDogViewController: UIViewController {
 
-    // Outlet for breed name label
-    @IBOutlet weak var breedNameLabel: UILabel!
+// an array to store dog breeds
+var dog = [String]()
+
+override func viewDidLoad() {
+    super.viewDidLoad()
     
-    // Outlet for dog image view
-    @IBOutlet weak var dogImage: UIImageView!
+    // Do any additional setup after loading the view.
+    // set table row height
+    self.tableView.rowHeight = 40.0
     
-    // Breed name
-    var breed = String()
+    // fetch dog breeds list
+    APIHelper.fetchdog { newArray in
+        self.dog = newArray
+        self.tableView.reloadData()
+    }
+}
+
+// MARK: - Table view data source
+override func numberOfSections(in tableView: UITableView) -> Int {
+    return 1
+}
+
+override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    return dog.count
+}
+
+override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    let cell = tableView.dequeueReusableCell(withIdentifier: "tablecell", for: indexPath) as! TableViewCell
     
-    // Array of breed images
-    var breeds: [String] = []
+    // set the cell's label with the dog breed
+    cell.Name.text = dog[indexPath.row]
     
-    // MARK: - View Life Cycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    // fetch the dog breed name
+    APIHelper.fetchdog { newArray in
+        let URL: String = "https://dog.ceo/api/breed/"
+        let List = newArray[indexPath.row]
+        let url: String = URL + List + "/images"
         
-        // Fetch the breed images using DogApi_ImageFull
-        Task {
+        // fetch the dog image with the dog breed
+        APIHelper.fetchImage(url: url) { dogImage in
+            // wait for some time to load the image
+            for _ in 0...100000 {
+                continue
+            }
+            
             do {
-                self.breeds = try await DogApi_ImageFull.fetchBreeds(breed: self.breed)
-                self.breedNameLabel.text = "Total Images for \(self.breed) = " + String(self.breeds.count)
-                self.dogImage.sd_setImage(with: URL(string: self.breeds[0]), placeholderImage: UIImage())
+                try cell.dogImage.image = UIImage(data: NSData(contentsOf: NSURL(string: dogImage[0])! as URL) as Data)
             } catch let error {
-                print("Error fetching breed images: \(error)")
+                print(error)
             }
         }
     }
-    
-    // MARK: - Actions
-    @IBAction func randomImage(_ sender: Any) {
-        self.dogImage.sd_setImage(with: URL(string: self.breeds[Int.random(in: 0...self.breeds.count-1 )]), placeholderImage: UIImage())
-    }
+    return cell
 }
+
+// MARK: - Navigation
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    // get the index of the selected cell
+    let index = tableView.indexPathForSelectedRow!.row
+    // get the selected dog name (string)
+    let selectedDog = dog[index].self
+    let dst = segue.destination as! ImageViewController
+    // set the dog breed view controller's variable dogName as the selected dog name
+    dst.dogName = selectedDog
+}
+}
+
+
+
+
+
